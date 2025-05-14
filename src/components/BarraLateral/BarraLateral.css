@@ -1,0 +1,21 @@
+.menu-lateral {
+    width: 250px;
+    height: calc(100vh - 56px);
+}
+
+.menu-lateral .item-ativo {
+    background-color: #e7f1ff;
+    border-radius: 8px;
+    padding: 8px 12px;
+}
+
+.menu-lateral li {
+    padding: 8px 12px;
+    border-radius: 8px;
+    transition: background-color 0.3s;
+    cursor: pointer;
+}
+
+.menu-lateral li:hover {
+    background-color: #e7f1ff;
+}

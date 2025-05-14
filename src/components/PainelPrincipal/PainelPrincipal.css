@@ -1,0 +1,13 @@
+.painel-principal {
+    min-height: 100vh;
+}
+
+.template-card {
+    width: 220px;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.template-card:hover {
+    transform: scale(1.03);
+}
