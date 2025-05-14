@@ -1,0 +1,77 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    scroll-behavior: smooth;
+  }
+  
+  html, body {
+    height: 100%;
+    font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    background-color: #f9fafb;
+    color: #212529;
+    font-size: 16px;
+  }
+  
+  a {
+    text-decoration: none;
+    color: inherit;
+    transition: color 0.2s ease-in-out;
+  }
+  
+  a:hover {
+    color: #0d6efd;
+  }
+  
+  button, .btn {
+    transition: all 0.2s ease-in-out;
+  }
+  
+  button:hover, .btn:hover {
+    opacity: 0.95;
+  }
+  
+  input, select, textarea {
+    font-family: inherit;
+    font-size: 1rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  
+  input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.2);
+  }
+  
+  .container {
+    max-width: 1140px;
+  }
+  
+  .navbar {
+    transition: background-color 0.3s ease-in-out, box-shadow 0.3s;
+  }
+  
+  .navbar-brand {
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+  
+  .heading {
+    font-size: 2rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+  }
+  
+  .card {
+    border-radius: 1rem;
+    border: none;
+    background-color: #fff;
+  }
+  
+  footer {
+    padding: 2rem 0;
+    text-align: center;
+    color: #6c757d;
+    font-size: 0.875rem;
+  }
+  
