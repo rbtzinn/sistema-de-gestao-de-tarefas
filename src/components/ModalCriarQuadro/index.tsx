@@ -3,6 +3,10 @@ import { Modal, Button, Form } from 'react-bootstrap';
 import './ModalCriarQuadro.css';
 import { useNavigate } from 'react-router-dom';
 import { useQuadros } from '../../contexts/QuadrosContext/';
+import bg1 from '../../assets/bg1.jpg';
+import bg2 from '../../assets/bg2.jpg';
+import bg3 from '../../assets/bg3.jpg';
+import bg4 from '../../assets/bg4.jpg';
 
 interface ModalCriarQuadroProps {
     show: boolean;
@@ -20,9 +24,10 @@ const ModalCriarQuadro: React.FC<ModalCriarQuadroProps> = ({ show, onHide, onCri
     const { adicionarQuadro } = useQuadros();
 
     const fundos = [
-        '/img/bg1.jpg', '/img/bg2.jpg', '/img/bg3.jpg', '/img/bg4.jpg',
+        bg1, bg2, bg3, bg4,
         '#6D6DFF', '#3B82F6', '#9333EA', '#E879F9', '#E0E0E0'
     ];
+
 
     const handleCriar = () => {
         if (!titulo.trim()) {

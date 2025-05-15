@@ -11,7 +11,7 @@ interface CardTarefaProps {
 
 const CardTarefa: React.FC<CardTarefaProps> = ({ titulo, descricao, membros, onEditar, onRemover }) => {
     return (
-        <Card className="mb-3 shadow-sm">
+        <Card className="mb-4">
             <Card.Body>
                 <Card.Title>{titulo}</Card.Title>
                 <Card.Text>{descricao}</Card.Text>
