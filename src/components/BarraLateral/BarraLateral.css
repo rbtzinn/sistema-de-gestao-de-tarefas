@@ -19,3 +19,9 @@
 .menu-lateral li:hover {
     background-color: #e7f1ff;
 }
+
+@media (max-width: 768px) {
+    .menu-lateral{
+        display: none;
+    }
+}

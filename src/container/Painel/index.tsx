@@ -1,6 +1,5 @@
-import React from 'react';
-import BarraLateral from '../../components/BarraLateral';
-import PainelPrincipal from '../../components/PainelPrincipal';
+import BarraLateral from "../../components/BarraLateral";
+import PainelPrincipal from "../../components/PainelPrincipal";
 
 const Painel: React.FC = () => {
     return (

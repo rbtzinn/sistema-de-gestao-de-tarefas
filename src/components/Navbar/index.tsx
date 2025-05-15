@@ -5,7 +5,7 @@ import ModalCriarQuadro from '../ModalCriarQuadro';
 const Navbar: React.FC = () => {
   const [modalAberto, setModalAberto] = useState(false);
   const location = useLocation();
-  const estaNoQuadro = location.pathname.startsWith('/quadro'); 
+  const estaNoQuadro = location.pathname.startsWith('/quadro');
 
   const handleCriarQuadro = (nome: string, descricao: string) => {
     console.log('Quadro criado:', nome, descricao);
@@ -13,34 +13,12 @@ const Navbar: React.FC = () => {
 
   return (
     <>
-      <nav className={`navbar navbar-expand-lg shadow-sm sticky-top ${estaNoQuadro ? 'bg-transparent' : 'bg-primary navbar-dark'
-        }`}>
-        <div className="container d-flex align-items-center justify-content-between">
+      <nav className={`navbar navbar-expand-lg shadow-sm sticky-top ${estaNoQuadro ? 'bg-transparent' : 'bg-primary navbar-dark'}`}>
+        <div className="container px-3 px-lg-5">
           <Link className="navbar-brand fw-bold d-flex align-items-center gap-2" to="/">
             <i className="bi bi-kanban-fill fs-4"></i>
             TaskFlow
           </Link>
-
-          <form className="d-flex flex-grow-1 mx-4" role="search">
-            <div className="input-group">
-              <span className="input-group-text bg-white border-end-0">
-                <i className="bi bi-search text-muted"></i>
-              </span>
-              <input
-                type="search"
-                className="form-control border-start-0"
-                placeholder="Pesquisar"
-                aria-label="Pesquisar"
-              />
-              <button
-                className="btn btn-secondary"
-                type="button"
-                onClick={() => setModalAberto(true)}
-              >
-                Criar
-              </button>
-            </div>
-          </form>
 
           <button
             className="navbar-toggler"
@@ -54,8 +32,31 @@ const Navbar: React.FC = () => {
             <span className="navbar-toggler-icon"></span>
           </button>
 
-          <div className="collapse navbar-collapse" id="navbarContent">
-            <ul className="navbar-nav ms-auto mb-2 mb-lg-0 d-flex align-items-lg-center gap-lg-3">
+          <div className="collapse navbar-collapse mt-3 mt-lg-0" id="navbarContent">
+            {/* Barra de pesquisa + botão "Criar" */}
+            <form className="d-flex flex-grow-1 me-lg-4 mb-3 mb-lg-0" role="search">
+              <div className="input-group w-100">
+                <span className="input-group-text bg-white border-end-0">
+                  <i className="bi bi-search text-muted"></i>
+                </span>
+                <input
+                  type="search"
+                  className="form-control border-start-0"
+                  placeholder="Pesquisar"
+                  aria-label="Pesquisar"
+                />
+                <button
+                  className="btn btn-secondary"
+                  type="button"
+                  onClick={() => setModalAberto(true)}
+                >
+                  Criar
+                </button>
+              </div>
+            </form>
+
+            {/* Menu de navegação */}
+            <ul className="navbar-nav ms-auto d-flex align-items-lg-center gap-lg-3">
               <li className="nav-item">
                 <Link className="nav-link active" to="/">Painel</Link>
               </li>
