@@ -7,9 +7,11 @@ import { useQuadros } from '../../contexts/QuadrosContext/';
 interface ModalCriarQuadroProps {
     show: boolean;
     onHide: () => void;
+    onCriar: (nome: string, descricao: string) => void;
 }
 
-const ModalCriarQuadro: React.FC<ModalCriarQuadroProps> = ({ show, onHide }) => {
+
+const ModalCriarQuadro: React.FC<ModalCriarQuadroProps> = ({ show, onHide, onCriar }) => {
     const [titulo, setTitulo] = useState('');
     const [visibilidade, setVisibilidade] = useState('Área de trabalho');
     const [fundoSelecionado, setFundoSelecionado] = useState('');
@@ -35,15 +37,21 @@ const ModalCriarQuadro: React.FC<ModalCriarQuadroProps> = ({ show, onHide }) => 
             fundo: fundoSelecionado,
             visibilidade
         };
+
         adicionarQuadro(novoQuadro);
+        onCriar(titulo, visibilidade);
+
         setTitulo('');
         setVisibilidade('Área de trabalho');
         setFundoSelecionado('');
         setErroTitulo(false);
         onHide();
+
+        console.log("Tentando navegar para /quadro/" + quadroId);
         navigate(`/quadro/${quadroId}`, {
             state: novoQuadro
         });
+        console.log("Navegação solicitada");
     };
 
     const handleFundoClick = (fundo: string) => {

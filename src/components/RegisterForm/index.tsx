@@ -50,7 +50,7 @@ const RegisterForm: React.FC = () => {
   };
 
   return (
-    <div className="container register-container">
+    <div className="container register-container mb-4">
       <div className="row justify-content-center">
         <div className="col-md-6 col-lg-5">
           <div className="card shadow-sm p-4 rounded-4">

@@ -1,58 +1,38 @@
 .pagina-quadro {
-    min-height: 100vh;
-    padding: 40px 20px;
-    color: white;
-    width: 100%;
-    position: relative;
-    z-index: 0;
-    padding-top: 5rem;
-}
-
-.pagina-quadro h1 {
-    font-size: 2.5rem;
-    font-weight: bold;
-}
-
-.pagina-quadro p {
-    font-size: 1.2rem;
-}
-
-.container-quadro {
-    background-color: rgba(0, 0, 0, 0.4);
-    padding: 20px;
-    border-radius: 10px;
-    max-width: 800px;
-    margin: auto;
-}
-
-.titulo-quadro {
-    font-size: 28px;
-    margin-bottom: 10px;
-}
-
-.visibilidade-quadro {
-    font-size: 16px;
-    color: #ddd;
+    padding: 2rem;
+    color: #333;
 }
 
 .quadro-tarefas {
     display: flex;
     gap: 2rem;
-    justify-content: space-between;
-    margin-top: 2rem;
+    justify-content: center;
 }
 
 .coluna {
-    background-color: rgba(255, 255, 255, 0.1);
-    border-radius: 10px;
+    background: #f2f2f2;
     padding: 1rem;
-    flex: 1;
-    min-width: 250px;
+    border-radius: 10px;
+    width: 300px;
 }
 
-.coluna h2 {
+.card-tarefa {
+    background: white;
+    padding: 1rem;
     margin-bottom: 1rem;
-    text-align: center;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
-    padding-bottom: 0.5rem;
+    border-radius: 8px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.acoes-tarefa button {
+    margin-right: 0.5rem;
+}
+
+.btn-adicionar {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    cursor: pointer;
 }

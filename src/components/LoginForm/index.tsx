@@ -28,7 +28,7 @@ const LoginForm: React.FC = () => {
   };
 
   return (
-    <div className="container login-container">
+    <div className="container login-container mb-4">
       <div className="row justify-content-center">
         <div className="col-md-6 col-lg-5">
           <div className="card shadow-sm p-4 rounded-4">

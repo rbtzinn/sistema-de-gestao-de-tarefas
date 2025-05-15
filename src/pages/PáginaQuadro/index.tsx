@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import './PaginaQuadro.css';
-import CardTarefa from '../../components/CardTarefa';
+import QuadroTarefas from '../../components/QuadroTarefas';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 const PaginaQuadro: React.FC = () => {
     const location = useLocation();
@@ -21,28 +21,11 @@ const PaginaQuadro: React.FC = () => {
     }, [fundo]);
 
     return (
-        <div className="pagina-quadro">
-            <header style={{ marginBottom: '2rem', textAlign: 'center' }}>
+        <div className="py-4">
+            <header className="text-center mb-4">
                 <h1>{titulo}</h1>
             </header>
-
-            <div className="quadro-tarefas">
-                <div className="coluna">
-                    <h2>Atribuído</h2>
-                    <CardTarefa titulo="Tarefa 1" descricao="Detalhes da tarefa 1" />
-                    <CardTarefa titulo="Tarefa 2" descricao="Detalhes da tarefa 2" />
-                </div>
-
-                <div className="coluna">
-                    <h2>Fazendo</h2>
-                    <CardTarefa titulo="Tarefa 3" descricao="Em andamento..." />
-                </div>
-
-                <div className="coluna">
-                    <h2>Feito</h2>
-                    <CardTarefa titulo="Tarefa 4" descricao="Concluído!" />
-                </div>
-            </div>
+            <QuadroTarefas />
         </div>
     );
 };

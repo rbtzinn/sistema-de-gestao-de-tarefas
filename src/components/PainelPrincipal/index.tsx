@@ -26,7 +26,9 @@ const PainelPrincipal: React.FC = () => {
             <ModalCriarQuadro
                 show={showModal}
                 onHide={() => setShowModal(false)}
+                onCriar={() => {}}
             />
+
 
             <div className="d-flex gap-3 flex-wrap mb-4">
                 {quadros.map((quadro) => (
