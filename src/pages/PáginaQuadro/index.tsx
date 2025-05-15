@@ -1,31 +1,39 @@
 import React, { useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import QuadroTarefas from '../../components/QuadroTarefas';
+import { useQuadros } from '../../contexts/QuadrosContext';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 const PaginaQuadro: React.FC = () => {
-    const location = useLocation();
-    const { titulo, fundo } = location.state || {};
+    const { id } = useParams();
+    const { quadros } = useQuadros();
+
+    const quadro = quadros.find(q => q.id === id);
 
     useEffect(() => {
+        if (!quadro) return;
+
         const previousBg = document.body.style.background;
-        if (fundo?.startsWith('#')) {
-            document.body.style.background = fundo;
-        } else if (fundo) {
-            document.body.style.background = `url(${fundo}) center/cover no-repeat`;
+        if (quadro.fundo?.startsWith('#')) {
+            document.body.style.background = quadro.fundo;
+        } else if (quadro.fundo) {
+            document.body.style.background = `url(${quadro.fundo}) center/cover no-repeat`;
         }
 
         return () => {
             document.body.style.background = previousBg;
         };
-    }, [fundo]);
+    }, [quadro]);
+
+    if (!quadro) return <p>Quadro não encontrado</p>;
 
     return (
         <div className="py-4">
             <header className="text-center mb-4">
-                <h1>{titulo}</h1>
+                <h1>{quadro.titulo}</h1>
             </header>
-            <QuadroTarefas />
+            <QuadroTarefas idDoQuadro={id!} />
+
         </div>
     );
 };

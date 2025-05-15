@@ -1,10 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import ColunaTarefas from '../ColunaTarefas';
 import TarefaModal from '../TarefaModal';
 import { Container, Row } from 'react-bootstrap';
 import type { Tarefa, TarefaModalType } from '../../types/tarefa';
 
-const QuadroTarefas: React.FC = () => {
+interface QuadroTarefasProps {
+    idDoQuadro: string;
+}
+
+const QuadroTarefas: React.FC<QuadroTarefasProps> = ({ idDoQuadro }) => {
+    const STORAGE_KEY = `tarefasPersistidas-${idDoQuadro}`;
+
     const [tarefas, setTarefas] = useState<{
         atribuido: Tarefa[];
         fazendo: Tarefa[];
@@ -18,6 +24,15 @@ const QuadroTarefas: React.FC = () => {
     const [modalAberto, setModalAberto] = useState(false);
     const [colunaAtual, setColunaAtual] = useState<keyof typeof tarefas | null>(null);
     const [tarefaEditando, setTarefaEditando] = useState<Tarefa | undefined>(undefined);
+    useEffect(() => {
+        const tarefasSalvas = localStorage.getItem(STORAGE_KEY);
+        if (tarefasSalvas) {
+            setTarefas(JSON.parse(tarefasSalvas));
+        }
+    }, [STORAGE_KEY]);
+    useEffect(() => {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(tarefas));
+    }, [tarefas, STORAGE_KEY]);
 
     const abrirModalAdicionar = (coluna: keyof typeof tarefas) => {
         setColunaAtual(coluna);
@@ -43,8 +58,7 @@ const QuadroTarefas: React.FC = () => {
                         t.id === tarefaInput.id ? { ...tarefaInput, id: tarefaInput.id } as Tarefa : t
                     ),
                 };
-            }
-            else {
+            } else {
                 const novaTarefa: Tarefa = {
                     id: Date.now(),
                     ...tarefaInput,
