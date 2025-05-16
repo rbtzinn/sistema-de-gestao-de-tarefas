@@ -1,4 +1,6 @@
 .draggable-tarefa {
-  transition: transform 200ms ease;
-  cursor: grab;
+  touch-action: none;
+  transition: none !important;
+  will-change: transform;
+  position: relative;
 }

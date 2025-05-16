@@ -4,6 +4,7 @@ import {
     FaClock, FaSpinner, FaCheck, FaGripVertical,
     FaPaperclip, FaHistory, FaBell
 } from 'react-icons/fa';
+import './styles.css'
 
 interface CardTarefaProps {
     id: string;
@@ -50,13 +51,18 @@ const CardTarefa: React.FC<CardTarefaProps> = ({
             case 'atribuido':
                 return <FaClock className="text-secondary me-1" />;
             case 'fazendo':
-                return <FaSpinner className="text-warning me-1 spin" />;
+                return (
+                    <span className="me-1">
+                        <FaSpinner className="text-warning spin" />
+                    </span>
+                );
             case 'feito':
                 return <FaCheck className="text-success me-1" />;
             default:
                 return null;
         }
     };
+
 
     const handleAnexo = (e: React.ChangeEvent<HTMLInputElement>) => {
         const files = e.target.files;

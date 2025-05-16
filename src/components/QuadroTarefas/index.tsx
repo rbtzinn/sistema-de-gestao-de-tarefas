@@ -87,6 +87,26 @@ const QuadroTarefas: React.FC<QuadroTarefasProps> = ({ idDoQuadro }) => {
             [coluna]: prev[coluna].filter((t) => t.id !== id),
         }));
     };
+    const moverTarefaManual = (id: number, direcao: 'esquerda' | 'direita', colunaAtual: keyof typeof tarefas) => {
+        const ordem: (keyof typeof tarefas)[] = ['atribuido', 'fazendo', 'feito'];
+        const indiceAtual = ordem.indexOf(colunaAtual);
+        const novoIndice =
+            direcao === 'esquerda' ? Math.max(0, indiceAtual - 1) : Math.min(ordem.length - 1, indiceAtual + 1);
+        const novaColuna = ordem[novoIndice];
+
+        if (colunaAtual === novaColuna) return;
+
+        const tarefaMovida = tarefas[colunaAtual].find((t) => t.id === id);
+        if (!tarefaMovida) return;
+
+        setTarefas((prev) => {
+            const atualizadas = { ...prev };
+            atualizadas[colunaAtual] = atualizadas[colunaAtual].filter((t) => t.id !== id);
+            atualizadas[novaColuna] = [...atualizadas[novaColuna], tarefaMovida];
+            return atualizadas;
+        });
+    };
+
 
     const sensores = useSensors(useSensor(PointerSensor));
 
@@ -134,8 +154,10 @@ const QuadroTarefas: React.FC<QuadroTarefasProps> = ({ idDoQuadro }) => {
                                     if (tarefa) abrirModalEditar(colunaKey, tarefa);
                                 }}
                                 onRemover={(id) => removerTarefa(colunaKey, Number(id))}
+                                onMover={(id, direcao) => moverTarefaManual(id, direcao, colunaKey)}
                                 colunaId={colunaKey}
                             />
+
                         ))}
 
                     </Row>
