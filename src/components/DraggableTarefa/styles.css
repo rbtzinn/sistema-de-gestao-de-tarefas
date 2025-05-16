@@ -1,0 +1,4 @@
+.draggable-tarefa {
+  transition: transform 200ms ease;
+  cursor: grab;
+}
