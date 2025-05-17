@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation} from 'react-router-dom';
 import ModalCriarQuadro from '../ModalCriarQuadro';
 import { useAuth } from '../../contexts/AuthContext';
 
 const Navbar: React.FC = () => {
   const [modalAberto, setModalAberto] = useState(false);
   const location = useLocation();
-  const navigate = useNavigate();
   const estaNoQuadro = location.pathname.startsWith('/quadro');
 
   const { isAuthenticated, user, logout } = useAuth();
@@ -20,7 +19,7 @@ const Navbar: React.FC = () => {
 
   const handleLogout = () => {
     logout();
-    navigate('/');
+    window.location.href = '/';
   };
 
   return (
