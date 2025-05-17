@@ -17,20 +17,7 @@ const BarraLateral: React.FC = () => {
                 >
                     Quadros
                 </li>
-                <li
-                    className={`mb-3 fw-bold ${ativo === 'Templates' ? 'text-primary' : 'text-muted'}`}
-                    onClick={() => handleClick('Templates')}
-                >
-                    Templates
-                </li>
-                <li
-                    className={`mb-3 fw-bold ${ativo === 'Início' ? 'text-primary' : 'text-muted'}`}
-                    onClick={() => handleClick('Início')}
-                >
-                    Início
-                </li>
                 <hr />
-                <li className="text-muted">+ Criar Área de trabalho</li>
             </ul>
         </aside>
     );

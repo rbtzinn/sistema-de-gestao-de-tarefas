@@ -1,14 +1,26 @@
 import React, { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import ModalCriarQuadro from '../ModalCriarQuadro';
+import { useAuth } from '../../contexts/AuthContext';
 
 const Navbar: React.FC = () => {
   const [modalAberto, setModalAberto] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
   const estaNoQuadro = location.pathname.startsWith('/quadro');
+
+  const { isAuthenticated, user, logout } = useAuth();
 
   const handleCriarQuadro = (nome: string, descricao: string) => {
     console.log('Quadro criado:', nome, descricao);
+  };
+
+  const isAdmin = user?.role === 'adm';
+  const isMember = user?.role === 'membro';
+
+  const handleLogout = () => {
+    logout();
+    navigate('/');
   };
 
   return (
@@ -33,7 +45,6 @@ const Navbar: React.FC = () => {
           </button>
 
           <div className="collapse navbar-collapse mt-3 mt-lg-0" id="navbarContent">
-            {/* Barra de pesquisa + botão "Criar" */}
             <form className="d-flex flex-grow-1 me-lg-4 mb-3 mb-lg-0" role="search">
               <div className="input-group w-100">
                 <span className="input-group-text bg-white border-end-0">
@@ -48,27 +59,60 @@ const Navbar: React.FC = () => {
                 <button
                   className="btn btn-secondary"
                   type="button"
-                  onClick={() => setModalAberto(true)}
+                  onClick={() => {
+                    if (!isAuthenticated) {
+                      alert('Você precisa estar logado para criar um quadro.');
+                    } else if (!isAdmin) {
+                      alert('Apenas administradores podem criar quadros.');
+                    } else {
+                      setModalAberto(true);
+                    }
+                  }}
                 >
                   Criar
                 </button>
               </div>
             </form>
 
-            {/* Menu de navegação */}
             <ul className="navbar-nav ms-auto d-flex align-items-lg-center gap-lg-3">
               <li className="nav-item">
                 <Link className="nav-link active" to="/">Painel</Link>
               </li>
-              <li className="nav-item">
-                <Link className="nav-link" to="/tarefas">Minhas Tarefas</Link>
-              </li>
-              <li className="nav-item">
-                <Link className="nav-link" to="/equipe">Equipe</Link>
-              </li>
-              <li className="nav-item">
-                <Link className="nav-link" to="/login">Entrar/Cadastrar</Link>
-              </li>
+
+              {isMember && (
+                <li className="nav-item">
+                  <Link className="nav-link" to="/painel-membros">Minhas Tarefas</Link>
+                </li>
+              )}
+
+              {isAdmin && (
+                <li className="nav-item">
+                  <Link className="nav-link" to="/equipe">Equipe</Link>
+                </li>
+              )}
+
+              {isAuthenticated ? (
+                <>
+                  <li className="nav-item">
+                    <span className="nav-link text-white fw-semibold">
+                      {user?.email.split('@')[0]}
+                    </span>
+                  </li>
+                  <li className="nav-item">
+                    <button
+                      className="btn btn-outline-light"
+                      onClick={handleLogout}
+                      type="button"
+                    >
+                      Sair
+                    </button>
+                  </li>
+                </>
+              ) : (
+                <li className="nav-item">
+                  <Link className="nav-link" to="/login">Entrar/Cadastrar</Link>
+                </li>
+              )}
             </ul>
           </div>
         </div>

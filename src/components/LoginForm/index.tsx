@@ -1,30 +1,40 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { useAuth } from '../../contexts/AuthContext';
 import './styles.css';
 
 const LoginForm: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [role] = useState('membro');
+  const [error, setError] = useState('');
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
 
-    const userData = { email, role };
-    localStorage.setItem('user', JSON.stringify(userData));
+    const usuariosValidos = [
+      { email: 'membro@gmail.com', senha: '123', role: 'membro' },
+      { email: 'admin@gmail.com', senha: '123', role: 'adm' }
+    ];
 
-    if (role === 'adm') {
-      navigate('/painel-adm');
+    const usuarioEncontrado = usuariosValidos.find(
+      (user) => user.email === email && user.senha === password
+    );
+
+    if (usuarioEncontrado) {
+      const userData = { email: usuarioEncontrado.email, role: usuarioEncontrado.role };
+      login(userData);
+      navigate('/');
     } else {
-      navigate('/painel');
+      setError('Email ou senha inválidos.');
     }
   };
 
   const handleGuestAccess = () => {
     const guestUser = { email: 'guest@taskflow.com', role: 'convidado' };
-    localStorage.setItem('user', JSON.stringify(guestUser));
-    navigate('/painel');
+    login(guestUser);
+    navigate('/');
   };
 
   return (
@@ -57,6 +67,8 @@ const LoginForm: React.FC = () => {
                   placeholder="Digite sua senha"
                 />
               </div>
+
+              {error && <div className="alert alert-danger">{error}</div>}
 
               <button type="submit" className="btn btn-primary w-100 fw-semibold">
                 Entrar

@@ -4,11 +4,14 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from 'react-bootstrap';
 import ModalCriarQuadro from '../ModalCriarQuadro';
 import './PainelPrincipal.css';
+import { useAuth } from '../../contexts/AuthContext';
 
 const PainelPrincipal: React.FC = () => {
     const { quadros } = useQuadros();
     const navigate = useNavigate();
     const [showModal, setShowModal] = useState(false);
+
+    const { isAuthenticated, user } = useAuth();
 
     return (
         <main className="flex-grow-1 p-3 p-md-4 painel-principal">
@@ -16,11 +19,20 @@ const PainelPrincipal: React.FC = () => {
                 <h5 className="fw-semibold m-0">Seus Quadros</h5>
                 <Button
                     variant="primary"
-                    onClick={() => setShowModal(true)}
+                    onClick={() => {
+                        if (!isAuthenticated) {
+                            navigate('/login');
+                        } else if (user?.role !== 'adm') {
+                            alert('Apenas administradores podem criar quadros.');
+                        } else {
+                            setShowModal(true);
+                        }
+                    }}
                     className="d-flex align-items-center gap-2"
                 >
                     <span className="fs-5">+</span> Criar Quadro
                 </Button>
+
             </div>
 
             <ModalCriarQuadro

@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Button, Form, Badge, InputGroup, FormControl } from 'react-bootstrap';
 import type { TarefaModalType } from '../../types/tarefa';
+import { useEquipe } from '../../contexts/EquipeContext';
 
 interface TarefaModalProps {
     show: boolean;
     onHide: () => void;
-    onSave: (tarefa: TarefaModalType) => void; 
+    onSave: (tarefa: TarefaModalType) => void;
     tarefaParaEditar?: TarefaModalType;
 }
 
@@ -15,6 +16,8 @@ const TarefaModal: React.FC<TarefaModalProps> = ({ show, onHide, onSave, tarefaP
     const [descricao, setDescricao] = useState('');
     const [membroInput, setMembroInput] = useState('');
     const [membros, setMembros] = useState<string[]>([]);
+
+    const { adicionarMembro: adicionarAoContexto } = useEquipe();
 
     useEffect(() => {
         if (tarefaParaEditar) {
@@ -33,6 +36,7 @@ const TarefaModal: React.FC<TarefaModalProps> = ({ show, onHide, onSave, tarefaP
         const nome = membroInput.trim();
         if (nome && !membros.includes(nome)) {
             setMembros(prev => [...prev, nome]);
+            adicionarAoContexto(nome);
             setMembroInput('');
         }
     };
