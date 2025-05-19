@@ -58,7 +58,36 @@ const TarefaModal: React.FC<TarefaModalProps> = ({ show, onHide, onSave, tarefaP
             membros,
         };
 
+        const alteracoes: string[] = [];
+
+        if (tarefaParaEditar) {
+            if (titulo.trim() !== tarefaParaEditar.titulo) {
+                alteracoes.push(`Título alterado de "${tarefaParaEditar.titulo}" para "${titulo.trim()}"`);
+            }
+            if (descricao.trim() !== tarefaParaEditar.descricao) {
+                alteracoes.push('Descrição alterada');
+            }
+
+            const novos = membros.filter(m => !tarefaParaEditar.membros?.includes(m));
+            const removidos = tarefaParaEditar.membros?.filter(m => !membros.includes(m)) || [];
+
+            novos.forEach(m => alteracoes.push(`Membro "${m}" adicionado`));
+            removidos.forEach(m => alteracoes.push(`Membro "${m}" removido`));
+        }
+
         onSave(tarefaSalva);
+
+        if (alteracoes.length > 0) {
+            alteracoes.forEach((alt, idx) =>
+                setTimeout(() => {
+                    const evento = new CustomEvent('registrarHistorico', {
+                        detail: { id: tarefaSalva.id, texto: alt },
+                    });
+                    window.dispatchEvent(evento);
+                }, idx * 100)
+            );
+        }
+
         onHide();
     };
 

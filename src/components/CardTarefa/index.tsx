@@ -1,10 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Card, Badge, Alert, ListGroup, Form } from 'react-bootstrap';
+import { Card, Alert, ListGroup, Form, Button, Collapse, Badge } from 'react-bootstrap';
 import {
     FaClock, FaSpinner, FaCheck, FaGripVertical,
     FaPaperclip, FaHistory, FaBell
 } from 'react-icons/fa';
-import './styles.css'
+
+import PrazoTarefa from '../PrazoTarefa';
+import PrioridadeTarefa from '../PrioridadeTarefa';
+import ComentariosTarefa from '../ComentariosTarefa';
+
+import './styles.css';
 
 interface CardTarefaProps {
     id: string;
@@ -34,14 +39,17 @@ const CardTarefa: React.FC<CardTarefaProps> = ({
     const [anexos, setAnexos] = useState<File[]>([]);
     const [historico, setHistorico] = useState<string[]>([]);
     const [notificacao, setNotificacao] = useState<string | null>(null);
+    const [showDetalhes, setShowDetalhes] = useState(false);
 
     const HISTORICO_KEY = `historico-${id}`;
+
     useEffect(() => {
         const data = localStorage.getItem(HISTORICO_KEY);
         if (data) {
             setHistorico(JSON.parse(data));
         }
     }, [HISTORICO_KEY]);
+
     useEffect(() => {
         localStorage.setItem(HISTORICO_KEY, JSON.stringify(historico));
     }, [historico, HISTORICO_KEY]);
@@ -51,18 +59,13 @@ const CardTarefa: React.FC<CardTarefaProps> = ({
             case 'atribuido':
                 return <FaClock className="text-secondary me-1" />;
             case 'fazendo':
-                return (
-                    <span className="me-1">
-                        <FaSpinner className="text-warning spin" />
-                    </span>
-                );
+                return <FaSpinner className="text-warning spin me-1" />;
             case 'feito':
                 return <FaCheck className="text-success me-1" />;
             default:
                 return null;
         }
     };
-
 
     const handleAnexo = (e: React.ChangeEvent<HTMLInputElement>) => {
         const files = e.target.files;
@@ -82,85 +85,100 @@ const CardTarefa: React.FC<CardTarefaProps> = ({
     };
 
     return (
-        <Card className="mb-4">
+        <Card
+            className="mb-3 shadow-sm tarefa-card"
+            onMouseEnter={() => setShowDetalhes(true)}
+            onMouseLeave={() => setShowDetalhes(false)}
+        >
             <Card.Body>
-                <Card.Title className="d-flex align-items-center justify-content-between">
-                    <div
-                        className="d-flex align-items-center"
-                        {...dragHandleProps}
-                        style={{ cursor: 'grab' }}
-                    >
+                <div className="d-flex justify-content-between align-items-center">
+                    <div className="d-flex align-items-center" {...dragHandleProps} style={{ cursor: 'grab' }}>
                         {getStatusIcon()}
-                        {titulo}
+                        <Card.Title className="mb-0">{titulo}</Card.Title>
                     </div>
-                    <div {...dragHandleProps} style={{ cursor: 'grab', display: 'inline-flex' }}>
-                        <FaGripVertical />
-                    </div>
-                </Card.Title>
-
-                <Card.Text>{descricao}</Card.Text>
-
-                <div className="mb-2">
-                    {membros.length > 0 ? (
-                        membros.map((membro, index) => (
-                            <Badge key={index} bg="info" text="dark" className="me-1">
-                                {membro}
-                            </Badge>
-                        ))
-                    ) : (
-                        <small className="text-muted">Sem membros</small>
-                    )}
+                    <FaGripVertical className="text-muted" />
                 </div>
 
-                <div className="d-flex justify-content-end gap-2">
-                    <Button variant="outline-primary" size="sm" onClick={onEditar}>
-                        Editar
-                    </Button>
-                    <Button variant="outline-danger" size="sm" onClick={onRemover}>
-                        Remover
-                    </Button>
-                </div>
+                <Card.Text className="text-muted">{descricao}</Card.Text>
 
-                <hr />
-
-                {notificacao && (
-                    <Alert variant="info" className="mt-3 py-1">
-                        <FaBell className="me-2" />
-                        {notificacao}
-                    </Alert>
+                {/* Mostrar os membros */}
+                {membros.length > 0 && (
+                    <div className="mt-2">
+                        <strong className="text-muted">Membros:</strong>
+                        <div className="d-flex gap-2 mt-1 flex-wrap">
+                            {membros.map((membro, index) => (
+                                <Badge bg="secondary" key={index}>
+                                    {membro}
+                                </Badge>
+                            ))}
+                        </div>
+                    </div>
                 )}
 
-                <div className="mt-3">
-                    <Form.Group controlId={`formFile-${id}`} className="mb-3">
-                        <Form.Label><FaPaperclip className="me-2" />Anexar arquivos</Form.Label>
-                        <Form.Control type="file" multiple onChange={handleAnexo} />
-                        {anexos.length > 0 && (
-                            <ListGroup className="mt-2">
-                                {anexos.map((file, index) => (
-                                    <ListGroup.Item key={index}>{file.name}</ListGroup.Item>
-                                ))}
-                            </ListGroup>
-                        )}
-                    </Form.Group>
+                <Collapse in={showDetalhes}>
+                    <div className="mt-3">
+                        <PrazoTarefa
+                            onPrazoChange={(prazo) =>
+                                setHistorico(prev => [...prev, `Prazo definido para ${prazo}`])
+                            }
+                        />
 
-                    <div className="mb-3">
-                        <strong><FaHistory className="me-2" />Histórico de alterações</strong>
-                        {historico.length > 0 ? (
-                            <ListGroup className="mt-1">
-                                {historico.map((item, index) => (
-                                    <ListGroup.Item key={index}>{item}</ListGroup.Item>
-                                ))}
-                            </ListGroup>
-                        ) : (
-                            <div className="text-muted mt-1">Sem histórico ainda</div>
+                        <PrioridadeTarefa
+                            onPrioridadeChange={(prioridade) =>
+                                setHistorico(prev => [...prev, `Prioridade alterada para ${prioridade}`])
+                            }
+                        />
+
+                        <ComentariosTarefa id={id} />
+
+                        <Form.Group controlId={`formFile-${id}`} className="mb-3">
+                            <Form.Label><FaPaperclip className="me-2" />Anexar arquivos</Form.Label>
+                            <Form.Control type="file" multiple onChange={handleAnexo} />
+                            {anexos.length > 0 && (
+                                <ListGroup className="mt-2">
+                                    {anexos.map((file, index) => (
+                                        <ListGroup.Item key={index}>{file.name}</ListGroup.Item>
+                                    ))}
+                                </ListGroup>
+                            )}
+                        </Form.Group>
+
+                        <div className="mb-3">
+                            <strong><FaHistory className="me-2" />Histórico de alterações</strong>
+                            {historico.length > 0 ? (
+                                <ListGroup className="mt-1">
+                                    {historico.map((item, index) => (
+                                        <ListGroup.Item key={index}>{item}</ListGroup.Item>
+                                    ))}
+                                </ListGroup>
+                            ) : (
+                                <div className="text-muted mt-1">Sem histórico ainda</div>
+                            )}
+                        </div>
+
+                        <div className="d-flex justify-content-between">
+                            <Button variant="outline-secondary" size="sm" onClick={simularNotificacao}>
+                                <FaBell className="me-2" />
+                                Simular Notificação
+                            </Button>
+                            <div className="d-flex gap-2">
+                                <Button variant="outline-primary" size="sm" onClick={onEditar}>
+                                    Editar
+                                </Button>
+                                <Button variant="outline-danger" size="sm" onClick={onRemover}>
+                                    Remover
+                                </Button>
+                            </div>
+                        </div>
+
+                        {notificacao && (
+                            <Alert variant="info" className="mt-3 py-1">
+                                <FaBell className="me-2" />
+                                {notificacao}
+                            </Alert>
                         )}
                     </div>
-
-                    <Button variant="outline-secondary" size="sm" onClick={simularNotificacao}>
-                        <FaBell className="me-2" />
-                        Simular Notificação
-                    </Button>
-                </div>
+                </Collapse>
             </Card.Body>
         </Card>
     );

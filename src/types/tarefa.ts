@@ -3,6 +3,7 @@ export interface Tarefa {
     titulo: string;
     descricao: string;
     membros?: string[];
+    prazo?: string;
 }
 
 export interface TarefaModalType extends Omit<Tarefa, 'id'> {
