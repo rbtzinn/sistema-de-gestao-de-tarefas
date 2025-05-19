@@ -92,16 +92,21 @@ const CardTarefa: React.FC<CardTarefaProps> = ({
         >
             <Card.Body>
                 <div className="d-flex justify-content-between align-items-center">
-                    <div className="d-flex align-items-center" {...dragHandleProps} style={{ cursor: 'grab' }}>
+                    <div className="d-flex align-items-center">
                         {getStatusIcon()}
                         <Card.Title className="mb-0">{titulo}</Card.Title>
                     </div>
-                    <FaGripVertical className="text-muted" />
+                    <div
+                        {...dragHandleProps}
+                        style={{ cursor: 'grab' }}
+                        className="text-muted"
+                    >
+                        <FaGripVertical />
+                    </div>
                 </div>
 
                 <Card.Text className="text-muted">{descricao}</Card.Text>
 
-                {/* Mostrar os membros */}
                 {membros.length > 0 && (
                     <div className="mt-2">
                         <strong className="text-muted">Membros:</strong>

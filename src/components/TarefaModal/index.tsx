@@ -116,6 +116,7 @@ const TarefaModal: React.FC<TarefaModalProps> = ({ show, onHide, onSave, tarefaP
                             placeholder="Descreva a tarefa"
                             value={descricao}
                             onChange={e => setDescricao(e.target.value)}
+                            className='no-resize'
                         />
                     </Form.Group>
 

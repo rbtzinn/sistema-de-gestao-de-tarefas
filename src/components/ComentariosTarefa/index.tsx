@@ -32,6 +32,7 @@ const ComentariosTarefa: React.FC<ComentariosTarefaProps> = ({ id }) => {
                 value={comentario}
                 onChange={(e) => setComentario(e.target.value)}
                 placeholder="Digite um comentário..."
+                className='no-resize'
             />
             <Button size="sm" variant="primary" className="mt-2" onClick={adicionarComentario}>
                 Adicionar Comentário
