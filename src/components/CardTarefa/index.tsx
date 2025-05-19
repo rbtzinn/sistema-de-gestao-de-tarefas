@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Card, Alert, ListGroup, Form, Button, Collapse, Badge } from 'react-bootstrap';
 import {
     FaClock, FaSpinner, FaCheck, FaGripVertical,
-    FaPaperclip, FaHistory, FaBell
+    FaPaperclip, FaBell
 } from 'react-icons/fa';
 
 import PrazoTarefa from '../PrazoTarefa';
@@ -10,6 +10,7 @@ import PrioridadeTarefa from '../PrioridadeTarefa';
 import ComentariosTarefa from '../ComentariosTarefa';
 
 import './styles.css';
+import HistoricoAlteracoes from '../HistoricoAlteracoes';
 
 interface CardTarefaProps {
     id: string;
@@ -148,18 +149,7 @@ const CardTarefa: React.FC<CardTarefaProps> = ({
                             )}
                         </Form.Group>
 
-                        <div className="mb-3">
-                            <strong><FaHistory className="me-2" />Histórico de alterações</strong>
-                            {historico.length > 0 ? (
-                                <ListGroup className="mt-1">
-                                    {historico.map((item, index) => (
-                                        <ListGroup.Item key={index}>{item}</ListGroup.Item>
-                                    ))}
-                                </ListGroup>
-                            ) : (
-                                <div className="text-muted mt-1">Sem histórico ainda</div>
-                            )}
-                        </div>
+                        <HistoricoAlteracoes historico={historico} />
 
                         <div className="d-flex justify-content-between">
                             <Button variant="outline-secondary" size="sm" onClick={simularNotificacao}>
