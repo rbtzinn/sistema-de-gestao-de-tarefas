@@ -8,9 +8,9 @@ import {
 import PrazoTarefa from '../PrazoTarefa';
 import PrioridadeTarefa from '../PrioridadeTarefa';
 import ComentariosTarefa from '../ComentariosTarefa';
-
-import './styles.css';
 import HistoricoAlteracoes from '../HistoricoAlteracoes';
+import { adicionarNoHistorico } from '../../utils/historico';
+import { formatarDataCompleta } from '../../utils/formatarData';
 
 interface CardTarefaProps {
     id: string;
@@ -55,6 +55,19 @@ const CardTarefa: React.FC<CardTarefaProps> = ({
         localStorage.setItem(HISTORICO_KEY, JSON.stringify(historico));
     }, [historico, HISTORICO_KEY]);
 
+    useEffect(() => {
+        const handleRegistrarHistorico = (e: any) => {
+            if (String(e.detail.id) === String(id)) {
+                const novoHistorico = adicionarNoHistorico(String(id), e.detail.texto);
+                setHistorico(novoHistorico);
+            }
+        };
+        window.addEventListener('registrarHistorico', handleRegistrarHistorico);
+        return () => {
+            window.removeEventListener('registrarHistorico', handleRegistrarHistorico);
+        };
+    }, [id]);
+
     const getStatusIcon = () => {
         switch (currentStatus) {
             case 'atribuido':
@@ -73,7 +86,8 @@ const CardTarefa: React.FC<CardTarefaProps> = ({
         if (files) {
             const newFiles = Array.from(files);
             setAnexos(prev => [...prev, ...newFiles]);
-            setHistorico(prev => [...prev, `Anexados ${newFiles.length} arquivo(s)`]);
+            const novoHistorico = adicionarNoHistorico(String(id), `Anexados ${newFiles.length} arquivo(s)`);
+            setHistorico(novoHistorico);
             setNotificacao('Novo(s) arquivo(s) anexado(s) com sucesso!');
             setTimeout(() => setNotificacao(null), 3000);
         }
@@ -81,7 +95,8 @@ const CardTarefa: React.FC<CardTarefaProps> = ({
 
     const simularNotificacao = () => {
         setNotificacao('Você tem uma nova notificação relacionada a esta tarefa.');
-        setHistorico(prev => [...prev, 'Notificação simulada enviada']);
+        const novoHistorico = adicionarNoHistorico(String(id), 'Notificação simulada enviada');
+        setHistorico(novoHistorico);
         setTimeout(() => setNotificacao(null), 3000);
     };
 
@@ -124,15 +139,23 @@ const CardTarefa: React.FC<CardTarefaProps> = ({
                 <Collapse in={showDetalhes}>
                     <div className="mt-3">
                         <PrazoTarefa
-                            onPrazoChange={(prazo) =>
-                                setHistorico(prev => [...prev, `Prazo definido para ${prazo}`])
-                            }
+                            onPrazoChange={(prazo) => {
+                                if (prazo) {
+                                    const dataFormatada = formatarDataCompleta(prazo);
+                                    if (!dataFormatada.includes('inválida')) {
+                                        const novoHistorico = adicionarNoHistorico(String(id), `Prazo definido para ${dataFormatada}`);
+                                        setHistorico(novoHistorico);
+                                    }
+                                }
+                            }}
+
                         />
 
                         <PrioridadeTarefa
-                            onPrioridadeChange={(prioridade) =>
-                                setHistorico(prev => [...prev, `Prioridade alterada para ${prioridade}`])
-                            }
+                            onPrioridadeChange={(prioridade) => {
+                                const novoHistorico = adicionarNoHistorico(String(id), `Prioridade alterada para ${prioridade}`);
+                                setHistorico(novoHistorico);
+                            }}
                         />
 
                         <ComentariosTarefa id={id} />

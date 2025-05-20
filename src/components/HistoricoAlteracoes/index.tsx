@@ -2,16 +2,47 @@ import React, { useEffect, useState } from 'react';
 import { Dropdown } from 'react-bootstrap';
 import { FaHistory } from 'react-icons/fa';
 
+export interface HistoricoItem {
+    texto: string;
+    timestamp?: string;
+}
+
 interface HistoricoAlteracoesProps {
-    historico: string[];
+    historico: (string | HistoricoItem)[];
 }
 
 const HistoricoAlteracoes: React.FC<HistoricoAlteracoesProps> = ({ historico }) => {
-    const [items, setItems] = useState<string[]>([]);
+    const [items, setItems] = useState<(string | HistoricoItem)[]>([]);
 
     useEffect(() => {
-        setItems(historico);
+        const sorted = [...historico].sort((a, b) => {
+            const getTime = (item: string | HistoricoItem): number => {
+                if (typeof item === 'object' && item.timestamp) {
+                    return new Date(item.timestamp).getTime();
+                }
+                return 0;
+            };
+
+            return getTime(b) - getTime(a);
+        });
+        setItems(sorted);
     }, [historico]);
+
+    useEffect(() => {
+        const handleNovoHistorico = (e: any) => {
+            const novoItem = e.detail as HistoricoItem;
+            setItems(prev => [
+                { texto: novoItem.texto, timestamp: novoItem.timestamp },
+                ...prev,
+            ]);
+        };
+
+        window.addEventListener('registrarHistorico', handleNovoHistorico);
+        return () => {
+            window.removeEventListener('registrarHistorico', handleNovoHistorico);
+        };
+    }, []);
+
 
     return (
         <div className="mb-3">
@@ -34,7 +65,7 @@ const HistoricoAlteracoes: React.FC<HistoricoAlteracoesProps> = ({ historico }) 
                                 key={index}
                                 className="text-wrap text-break"
                             >
-                                {item}
+                                {typeof item === 'object' ? item.texto : item}
                             </Dropdown.Item>
                         ))
                     ) : (

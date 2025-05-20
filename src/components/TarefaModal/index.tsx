@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Modal, Button, Form, Badge, InputGroup, FormControl } from 'react-bootstrap';
 import type { TarefaModalType } from '../../types/tarefa';
 import { useEquipe } from '../../contexts/EquipeContext';
+import { adicionarNoHistorico } from '../../utils/historico';
 
 interface TarefaModalProps {
     show: boolean;
@@ -9,7 +10,6 @@ interface TarefaModalProps {
     onSave: (tarefa: TarefaModalType) => void;
     tarefaParaEditar?: TarefaModalType;
 }
-
 
 const TarefaModal: React.FC<TarefaModalProps> = ({ show, onHide, onSave, tarefaParaEditar }) => {
     const [titulo, setTitulo] = useState('');
@@ -77,16 +77,23 @@ const TarefaModal: React.FC<TarefaModalProps> = ({ show, onHide, onSave, tarefaP
 
         onSave(tarefaSalva);
 
-        if (alteracoes.length > 0) {
-            alteracoes.forEach((alt, idx) =>
-                setTimeout(() => {
+        alteracoes.forEach((alt, idx) => {
+            setTimeout(() => {
+                const timestamp = new Date().toISOString();
+                if (tarefaSalva.id) {
+                    const idStr = String(tarefaSalva.id);
                     const evento = new CustomEvent('registrarHistorico', {
-                        detail: { id: tarefaSalva.id, texto: alt },
+                        detail: {
+                            id: idStr,
+                            texto: alt,
+                            timestamp
+                        },
                     });
                     window.dispatchEvent(evento);
-                }, idx * 100)
-            );
-        }
+                    adicionarNoHistorico(idStr, alt);
+                }
+            }, idx * 100);
+        });
 
         onHide();
     };
