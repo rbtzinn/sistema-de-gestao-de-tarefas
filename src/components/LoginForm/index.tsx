@@ -1,49 +1,62 @@
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { useAuth } from '../../contexts/AuthContext';
+import { useNavigate } from 'react-router-dom';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { setDoc, doc } from 'firebase/firestore';
+import { auth, db } from '../../firebase/firebase';
 import './styles.css';
 
-const LoginForm: React.FC = () => {
+const Register: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [selectedRole, setSelectedRole] = useState<'administrador' | 'membro'>('membro');
   const [error, setError] = useState('');
   const navigate = useNavigate();
-  const { login } = useAuth();
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const usuariosValidos = [
-      { email: 'membro@gmail.com', senha: '123', role: 'membro' },
-      { email: 'admin@gmail.com', senha: '123', role: 'adm' }
-    ];
+    try {
+      const res = await createUserWithEmailAndPassword(auth, email, password);
+      const user = res.user;
 
-    const usuarioEncontrado = usuariosValidos.find(
-      (user) => user.email === email && user.senha === password
-    );
+      await setDoc(doc(db, 'users', user.uid), {
+        email: user.email,
+        role: selectedRole,
+      });
 
-    if (usuarioEncontrado) {
-      const userData = { email: usuarioEncontrado.email, role: usuarioEncontrado.role };
-      login(userData);
       navigate('/');
-    } else {
-      setError('Email ou senha inválidos.');
+    } catch (err: any) {
+      console.error(err);
+      setError(err.message);
     }
   };
 
-  const handleGuestAccess = () => {
-    const guestUser = { email: 'guest@taskflow.com', role: 'convidado' };
-    login(guestUser);
-    navigate('/');
+  const renderRoleDescription = () => {
+    if (selectedRole === 'membro') {
+      return (
+        <div className="text-muted small mt-2">
+          Membro é um usuário que participa de uma equipe, executa tarefas atribuídas a ele mesmo,
+          mas não pode atribuir tarefas a outros.
+        </div>
+      );
+    }
+    if (selectedRole === 'administrador') {
+      return (
+        <div className="text-muted small mt-2">
+          Administrador é o usuário responsável por criar equipes e atribuir tarefas aos membros.
+        </div>
+      );
+    }
+    return null;
   };
 
   return (
-    <div className="container login-container mb-4">
+    <div className="container register-container mb-4">
       <div className="row justify-content-center">
         <div className="col-md-6 col-lg-5">
           <div className="card shadow-sm p-4 rounded-4">
-            <h2 className="mb-4 text-center text-primary fw-bold">Bem-vindo ao TaskFlow</h2>
-            <form onSubmit={handleLogin}>
+            <h2 className="mb-4 text-center text-primary fw-bold">Criar uma Conta no TaskFlow</h2>
+            <form onSubmit={handleRegister}>
               <div className="mb-3">
                 <label className="form-label">E-mail</label>
                 <input
@@ -64,31 +77,33 @@ const LoginForm: React.FC = () => {
                   required
                   value={password}
                   onChange={e => setPassword(e.target.value)}
-                  placeholder="Digite sua senha"
+                  placeholder="Crie uma senha"
                 />
               </div>
 
-              {error && <div className="alert alert-danger">{error}</div>}
+              <div className="mb-4">
+                <label className="form-label">Tipo de Usuário</label>
+                <select
+                  className="form-select clean-select"
+                  value={selectedRole}
+                  onChange={e => setSelectedRole(e.target.value as 'administrador' | 'membro')}
+                >
+                  <option value="membro">Membro</option>
+                  <option value="administrador">Administrador</option>
+                </select>
+                {renderRoleDescription()}
+              </div>
+
+              {error && (
+                <div className="alert alert-danger py-2 small text-center" role="alert">
+                  {error}
+                </div>
+              )}
 
               <button type="submit" className="btn btn-primary w-100 fw-semibold">
-                Entrar
-              </button>
-
-              <button
-                type="button"
-                className="btn btn-outline-secondary w-100 mt-3"
-                onClick={handleGuestAccess}
-              >
-                Continuar como convidado
+                Cadastrar
               </button>
             </form>
-
-            <div className="text-center mt-4">
-              <span className="text-muted">Não tem uma conta? </span>
-              <Link to="/cadastro" className="text-decoration-none fw-semibold text-primary">
-                Cadastre-se
-              </Link>
-            </div>
           </div>
         </div>
       </div>
@@ -96,4 +111,4 @@ const LoginForm: React.FC = () => {
   );
 };
 
-export default LoginForm;
+export default Register;
