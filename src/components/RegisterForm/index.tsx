@@ -1,37 +1,38 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { setDoc, doc } from 'firebase/firestore';
+import { auth, db } from '../../firebase/firebase';
 import './styles.css';
 
-const RegisterForm: React.FC = () => {
-  const [fullName, setFullName] = useState('');
-  const [birthDate, setBirthDate] = useState('');
+const Register: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [role, setRole] = useState('membro');
+  const [selectedRole, setSelectedRole] = useState<'administrador' | 'membro'>('membro');
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
-  const handleRegister = (e: React.FormEvent) => {
+  const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (password !== confirmPassword) {
-      setError('As senhas não coincidem.');
-      return;
-    }
+    try {
+      const res = await createUserWithEmailAndPassword(auth, email, password);
+      const user = res.user;
 
-    const userData = { fullName, birthDate, email, role };
-    localStorage.setItem('user', JSON.stringify(userData));
+      await setDoc(doc(db, 'users', user.uid), {
+        email: user.email,
+        role: selectedRole,
+      });
 
-    if (role === 'adm') {
-      navigate('/painel-adm');
-    } else {
-      navigate('/painel');
+      navigate('/');
+    } catch (err: any) {
+      console.error(err);
+      setError(err.message);
     }
   };
 
   const renderRoleDescription = () => {
-    if (role === 'membro') {
+    if (selectedRole === 'membro') {
       return (
         <div className="text-muted small mt-2">
           Membro é um usuário que participa de uma equipe, executa tarefas atribuídas a ele mesmo,
@@ -39,7 +40,7 @@ const RegisterForm: React.FC = () => {
         </div>
       );
     }
-    if (role === 'adm') {
+    if (selectedRole === 'administrador') {
       return (
         <div className="text-muted small mt-2">
           Administrador é o usuário responsável por criar equipes e atribuir tarefas aos membros.
@@ -56,29 +57,6 @@ const RegisterForm: React.FC = () => {
           <div className="card shadow-sm p-4 rounded-4">
             <h2 className="mb-4 text-center text-primary fw-bold">Criar uma Conta no TaskFlow</h2>
             <form onSubmit={handleRegister}>
-              <div className="mb-3">
-                <label className="form-label">Nome completo</label>
-                <input
-                  type="text"
-                  className="form-control"
-                  required
-                  value={fullName}
-                  onChange={e => setFullName(e.target.value)}
-                  placeholder="Digite seu nome"
-                />
-              </div>
-
-              <div className="mb-3">
-                <label className="form-label">Data de nascimento</label>
-                <input
-                  type="date"
-                  className="form-control"
-                  required
-                  value={birthDate}
-                  onChange={e => setBirthDate(e.target.value)}
-                />
-              </div>
-
               <div className="mb-3">
                 <label className="form-label">E-mail</label>
                 <input
@@ -103,27 +81,15 @@ const RegisterForm: React.FC = () => {
                 />
               </div>
 
-              <div className="mb-3">
-                <label className="form-label">Repetir senha</label>
-                <input
-                  type="password"
-                  className="form-control"
-                  required
-                  value={confirmPassword}
-                  onChange={e => setConfirmPassword(e.target.value)}
-                  placeholder="Repita a senha"
-                />
-              </div>
-
               <div className="mb-4">
                 <label className="form-label">Tipo de Usuário</label>
                 <select
                   className="form-select clean-select"
-                  value={role}
-                  onChange={e => setRole(e.target.value)}
+                  value={selectedRole}
+                  onChange={e => setSelectedRole(e.target.value as 'administrador' | 'membro')}
                 >
                   <option value="membro">Membro</option>
-                  <option value="adm">Administrador</option>
+                  <option value="administrador">Administrador</option>
                 </select>
                 {renderRoleDescription()}
               </div>
@@ -145,4 +111,4 @@ const RegisterForm: React.FC = () => {
   );
 };
 
-export default RegisterForm;
+export default Register;
